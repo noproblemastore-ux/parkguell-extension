@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Park Güell Bot — Scop Tickets",
+  "version": "1.0",
+  "description": "Rellena automáticamente el formulario de compra de Park Güell",
+  "permissions": ["activeTab", "scripting", "storage", "tabs"],
+  "host_permissions": [
+    "https://www.parkguellonline.cat/*",
+    "https://odhogdwxafqdlfvfbsux.supabase.co/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "icon.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.parkguellonline.cat/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "48": "icon.png"
+  }
+}

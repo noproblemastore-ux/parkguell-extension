@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 340px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .header {
+      background: #1a5276;
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header h1 { font-size: 14px; font-weight: 600; }
+    .header span { font-size: 11px; opacity: 0.7; }
+
+    .body { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #777;
+      margin-bottom: 4px;
+    }
+
+    .row { display: flex; gap: 8px; }
+    .field { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+    label { font-size: 11px; color: #555; font-weight: 500; }
+
+    input, select {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 12px;
+      background: white;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus { border-color: #1a5276; }
+
+    .tickets-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .ticket-field {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 5px 8px;
+    }
+    .ticket-field label { font-size: 11px; flex: 1; color: #444; }
+    .ticket-field input {
+      width: 36px;
+      text-align: center;
+      padding: 3px 4px;
+      border: none;
+      border-left: 1px solid #eee;
+      border-radius: 0;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    #visitors-container { display: flex; flex-direction: column; gap: 6px; }
+    .visitor-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .visitor-row input { flex: 1; }
+    .visitor-num {
+      width: 20px;
+      min-width: 20px;
+      height: 20px;
+      background: #1a5276;
+      color: white;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-run {
+      background: #1a5276;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 11px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.15s;
+    }
+    .btn-run:hover { background: #154360; }
+    .btn-run:disabled { background: #aaa; cursor: not-allowed; }
+
+    .status {
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      text-align: center;
+      display: none;
+    }
+    .status.info    { background: #eaf4fb; color: #1a5276; display: block; }
+    .status.success { background: #eafaf1; color: #1e8449; display: block; }
+    .status.error   { background: #fdedec; color: #c0392b; display: block; }
+    .status.warning { background: #fef9e7; color: #b7770d; display: block; }
+
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      padding: 4px 0;
+    }
+    .step {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #ddd;
+      transition: background 0.2s;
+    }
+    .step.active { background: #1a5276; }
+    .step.done   { background: #1e8449; }
+
+    hr { border: none; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🏛 Park Güell Bot</h1>
+    <span>Scop Tickets — Autocompletado</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- Fecha y hora -->
+  <div>
+    <div class="section-title">Visita</div>
+    <div class="row">
+      <div class="field">
+        <label>Fecha</label>
+        <input type="date" id="visit-date">
+      </div>
+      <div class="field">
+        <label>Hora</label>
+        <select id="time-slot">
+          <option value="">-- Hora --</option>
+          <option>09:30</option><option>10:00</option><option>10:30</option>
+          <option>11:00</option><option>11:30</option><option>12:00</option>
+          <option>12:30</option><option>13:00</option><option>13:30</option>
+          <option>14:00</option><option>14:30</option><option>15:00</option>
+          <option>15:30</option><option>16:00</option><option>16:30</option>
+          <option>17:00</option><option>17:30</option><option>18:00</option>
+          <option>18:30</option><option>19:00</option><option>19:30</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Tickets -->
+  <div>
+    <div class="section-title">Tickets</div>
+    <div class="tickets-grid">
+      <div class="ticket-field">
+        <label>General (18€)</label>
+        <input type="number" id="t-general" min="0" max="7" value="0">
+      </div>
+      <div class="ticket-field">
+        <label>Niños 7–12 (13.50€)</label>
+        <input type="number" id="t-children-7-12" min="0" max="7" value="0">
+      </div>
+      <div class="ticket-field">
+        <label>Niños 0–6 (gratis)</label>
+        <input type="number" id="t-children-0-6" min="0" max="7" value="0">
+      </div>
+      <div class="ticket-field">
+        <label>+65 años (13.50€)</label>
+        <input type="number" id="t-over65" min="0" max="7" value="0">
+      </div>
+      <div class="ticket-field">
+        <label>T.Rosa Reduïda</label>
+        <input type="number" id="t-targeta-rosa-reduida" min="0" max="7" value="0">
+      </div>
+      <div class="ticket-field">
+        <label>Discapacidad</label>
+        <input type="number" id="t-disabilities" min="0" max="7" value="0">
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Visitantes -->
+  <div>
+    <div class="section-title">Nombre completo de visitantes</div>
+    <div id="visitors-container">
+      <div style="font-size:11px; color:#999; text-align:center; padding: 6px 0;">
+        Completá los tickets arriba para ver los campos
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Estado y pasos -->
+  <div class="step-indicator" id="steps">
+    <div class="step" id="s1" title="Actividad"></div>
+    <div class="step" id="s2" title="Tickets"></div>
+    <div class="step" id="s3" title="Fecha"></div>
+    <div class="step" id="s4" title="Hora"></div>
+    <div class="step" id="s5" title="Datos personales"></div>
+    <div class="step" id="s6" title="Visitantes"></div>
+  </div>
+
+  <div class="status" id="status">Listo</div>
+
+  <button class="btn-run" id="btn-run">▶ Completar formulario</button>
+
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

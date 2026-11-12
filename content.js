@@ -67,9 +67,13 @@ function orderToBot(row) {
 
 async function fetchOrder(orderId) {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/orders?id=eq.${orderId}&select=*&limit=1`,
-    { headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` } }
-  );
+      `${SUPABASE_URL}/rest/v1/rpc/get_order_for_extension`,
+      {
+        method: 'POST',
+        headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_id: orderId })
+      }
+    );
   if (!res.ok) throw new Error(`Error al obtener la orden: ${res.status}`);
   const rows = await res.json();
   if (!rows.length) throw new Error(`Orden no encontrada: ${orderId}`);
